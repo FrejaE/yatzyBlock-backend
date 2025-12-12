@@ -1,10 +1,11 @@
+export type Player = {
+  name: string;
+  totalScore: number;
+};
+
 export type GameDto = {
   id: string;
-  totalScore: number;
   createdBy: string;
-  players: {
-    name: string;
-    score: number;
-  }[];
+  players: Player[];
   createdAt: string;
 };

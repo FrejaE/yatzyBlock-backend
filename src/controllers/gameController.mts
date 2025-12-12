@@ -1,20 +1,20 @@
-import type { InferSchemaType } from 'mongoose';
-import Game from '../models/gameSchema.mjs';
-import type { GameDto } from '../models/GameDto.mjs';
-import type { GameDocument } from '../models/gameSchema.mjs';
+import type { InferSchemaType } from "mongoose";
+import Game from "../models/gameSchema.mjs";
+import type { GameDto } from "../models/GameDto.mjs";
+import type { GameDocument } from "../models/gameSchema.mjs";
+import User from "../models/userSchema.mjs";
 
 type GameType = InferSchemaType<typeof Game.schema>;
 
-// TODO : Mer anu problem
+// TODO : Mer any problem
 
 export const convertGameDbToGameDto = (gameFromDb: GameDocument): GameDto => {
   return {
     id: gameFromDb._id.toString(),
-    totalScore: gameFromDb.totalScore,
     createdBy: gameFromDb.createdBy.toString(),
     players: gameFromDb.players.map((p) => ({
       name: p.name!,
-      score: p.score!,
+      totalScore: p.totalScore!,
     })),
     createdAt: gameFromDb.createdAt.toISOString(),
   };
@@ -22,15 +22,14 @@ export const convertGameDbToGameDto = (gameFromDb: GameDocument): GameDto => {
 
 // CREATE
 export const createGame = async (
-  totalScore: number,
   createdBy: string,
-  players: { name: string; score: number }[]
+  players: { name: string; totalScore: number }[]
 ): Promise<GameDto> => {
   const game = await Game.create({
-    totalScore,
     createdBy,
     players,
   });
+  await User.updateOne({ _id: createdBy }, { $push: { games: game._id } });
   return convertGameDbToGameDto(game as any);
 };
 
@@ -58,5 +57,6 @@ export const updateGame = async (
 // DELETE
 export const deleteGame = async (id: string): Promise<GameDto | null> => {
   const game = await Game.findByIdAndDelete(id);
+  //   TODO : await User bheöver deleta spel från user
   return game ? convertGameDbToGameDto(game as any) : null;
 };
