@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { userRouter } from "./routes/userRoute.mjs";
+import { authRouter } from "./routes/authRoute.mjs";
 import { gameRouter } from "./routes/gameRoute.mjs";
 import { highScoreRouter } from "./routes/highScoreRoute.mjs";
 import cors from "cors";
@@ -23,7 +23,7 @@ app.use((req, _, next) => {
   next();
 });
 
-app.use("/login", userRouter);
+app.use("/auth", authRouter);
 app.use("/games", gameRouter);
 app.use("/highscore", highScoreRouter);
 

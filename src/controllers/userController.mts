@@ -1,7 +1,7 @@
-import type { UserDto } from '../models/UserDto.mjs';
-import type { UserDocument } from '../models/userSchema.mjs';
-import User from '../models/userSchema.mjs';
-import { convertGameDbToGameDto } from './gameController.mjs';
+import type { UserDto } from "../models/UserDto.mjs";
+import type { UserDocument } from "../models/userSchema.mjs";
+import User from "../models/userSchema.mjs";
+import { convertGameDbToGameDto } from "./gameController.mjs";
 
 //TODO : shitload of anys
 
@@ -22,6 +22,15 @@ export const createUser = async (
   email: string,
   password: string
 ): Promise<UserDto> => {
+  const existingUsername = await User.findOne({ username });
+  if (existingUsername) {
+    throw new Error("Username already exists");
+  }
+  const existingMail = await User.findOne({ email });
+  if (existingMail) {
+    throw new Error("User with this email already exists");
+  }
+
   const newUser = await User.create({
     username: username,
     email: email,
@@ -32,13 +41,13 @@ export const createUser = async (
 
 //GET all users
 export const getAllUsers = async (): Promise<UserDto[]> => {
-  const users = await User.find().populate('games').exec();
+  const users = await User.find().populate("games").exec();
   return users.map(convertUserDbToUserDto as any);
 };
 
 // GET user
 export const getUserById = async (id: string): Promise<UserDto | null> => {
-  const user = await User.findById(id).populate('games').exec();
+  const user = await User.findById(id).populate("games").exec();
   return user ? convertUserDbToUserDto(user as any) : null;
 };
 
