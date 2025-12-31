@@ -23,6 +23,9 @@ app.use((req, _, next) => {
   next();
 });
 
+//Mappen som styr att hemsidan syns
+app.use(express.static("hemsida"));
+
 app.use("/auth", authRouter);
 app.use("/games", gameRouter);
 app.use("/highscore", highScoreRouter);
