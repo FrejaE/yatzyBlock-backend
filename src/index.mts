@@ -26,6 +26,10 @@ app.use((req, _, next) => {
 //Mappen som styr att hemsidan syns
 app.use(express.static("hemsida"));
 
+app.get("/ping", (_, res) => {
+  res.json({ status: "ok" });
+});
+
 app.use("/auth", authRouter);
 app.use("/games", gameRouter);
 app.use("/highscore", highScoreRouter);
